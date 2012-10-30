@@ -6,7 +6,11 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.db import models
-from django.utils.timezone import now
+try:  # available from Django1.4
+    from django.utils.timezone import now
+except ImportError:
+    now = datetime.now
+
 from django.utils.translation import ugettext_lazy as _
 
 from .processor import PaylineProcessor
