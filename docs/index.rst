@@ -179,6 +179,10 @@ foreign key added to the user's profile, pointing to ``payline.models.Wallet``:
 Changes
 -------
 
+* 0.5: removed useless ordering on 'pk'
+* 0.4: fixing missing wsdl (for good)
+* 0.3: fixing wsdl (again)
+* 0.2: missing wsdl file in the distribution
 * 0.1: initial version
 
 Indices and tables
