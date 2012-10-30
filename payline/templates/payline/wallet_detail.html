@@ -1,0 +1,12 @@
+{% extends "cloud/account.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Enterprise account page: Payment details" %}{% endblock %}
+
+{% block sidebar-bottom %}{% endblock %}
+
+{% block content %}
+    {% with wallet=object %}
+        {% include "payline/wallet_detail_partial.html" %}
+    {% endwith %}
+{% endblock content %}

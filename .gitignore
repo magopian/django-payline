@@ -1,0 +1,5 @@
+*.egg-info
+dist
+docs/_build
+.coverage
+payline/settings.py

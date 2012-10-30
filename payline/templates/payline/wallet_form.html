@@ -1,0 +1,17 @@
+{% extends "cloud/account.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Enterprise account page: change payment details" %}{% endblock %}
+
+{% block sidebar-bottom %}
+    <h3>{% trans "Fear not, this is safe!" %} <i class="icon-lock"></i></h3>
+    <p>{% trans "Check the URL in the location bar, right at the top of your browser: there's a lock on the left of the address, validating that you're on a page secured by SSL" %}.</p>
+    <p>{% trans "Also, we can guarantee you that we're not storing your payment card information on our servers, we're in fact trusting our PCI-DSS compliant partner:" %} <a href="http://www.payline.com">Payline</a>.</p>
+{% endblock sidebar-bottom %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input class="btn btn-primary" type="submit" value="{% if object %}{% trans "Update wallet" %}{% else %}{% trans "Create wallet" %}{% endif %}" />
+</form>
+{% endblock content %}

@@ -1,0 +1,5 @@
+include README.rst
+include requirements.txt
+include docs/Makefile docs/conf.py
+recursive-include payline/templates *.html
+recursive-include docs *.rst

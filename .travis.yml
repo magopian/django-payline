@@ -1,0 +1,21 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+env:
+  - DJANGO_VERSION=1.3
+  - DJANGO_VERSION=1.4
+before_install:
+  - export PIP_USE_MIRRORS=true
+  - export PIP_INDEX_URL=https://simple.crate.io/
+  - export DJANGO_SETTINGS_MODULE=payline.test_settings
+install:
+  - pip install -e .
+  - pip install -r requirements.txt Django==$DJANGO_VERSION
+before_script:
+  - flake8 payline
+script:
+  - make test
+branches:
+  only:
+    - master

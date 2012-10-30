@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<dl class="wallet-detail">
+    <dt>{% trans "Owner's first name:" %}</dt>
+    <dd>{{ wallet.first_name }}</dd>
+
+    <dt>{% trans "Owner's last name:" %}</dt>
+    <dd>{{ wallet.last_name }}</dd>
+
+    <dt>{% trans "Card type:" %}</dt>
+    <dd>{% for val, name in wallet.CARD_TYPE_CHOICES %}{% if val == wallet.card_type %}{{ name }}{% endif %}{% endfor %}</dd>
+
+    <dt>{% trans "Card number:" %}</dt>
+    <dd>{{ wallet.card_number }}</dd>
+
+    <dt>{% trans "Card expiration date:" %}</dt>
+    <dd>{{ wallet.card_expiry }}</dd>
+</dl>
+
+<p><a class="btn btn-primary" href="{% block update-wallet-url %}{% url "update_wallet" %}{% endblock %}">{% trans "Change this card" %}</a></p>
