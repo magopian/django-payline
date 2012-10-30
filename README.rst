@@ -68,7 +68,7 @@ Run the tests::
 
 By default, two integration tests will be skipped when running the tests. Those
 integration tests need the following settings (put them in a
-:file:`settings.py` file)::
+``settings.py`` file)::
 
     from test_settings import *
 

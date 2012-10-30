@@ -67,7 +67,7 @@ First, create an app. Let's call it ``payment``:
 
     python manage.py startapp payment
 
-Add some URLs in :file:`payment/urls.py`:
+Add some URLs in ``payment/urls.py``:
 
 .. code-block:: python
 
@@ -83,7 +83,7 @@ Add some URLs in :file:`payment/urls.py`:
         url(r'^wallet/update/$', views.update_wallet, name='update_wallet'),
     )
 
-Finally, add the :file:`payment/views.py` you referenced in :file:`urls.py`:
+Finally, add the ``payment/views.py`` you referenced in ``urls.py``:
 
 .. code-block:: python
 
