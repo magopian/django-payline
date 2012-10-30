@@ -55,7 +55,6 @@ class Wallet(models.Model):
         max_length=4, help_text=_("Format: MMYY (eg 0213 for february 2013)"))
 
     class Meta:
-        ordering = ('pk',)
         verbose_name = _("wallet")
         verbose_name_plural = _("wallets")
 
