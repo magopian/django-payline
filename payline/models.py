@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 
 from uuid import uuid4
 
-from django.core.urlresolvers import reverse_lazy
 from django.db import models
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
