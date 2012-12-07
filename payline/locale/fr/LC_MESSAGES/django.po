@@ -1,0 +1,140 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Django-Payline\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-12-07 10:57+0100\n"
+"PO-Revision-Date: 2012-12-07 13:17+0100\n"
+"Last-Translator: Mathieu Agopian <mathieu.agopian@novapost.fr>\n"
+"Language-Team: LANGUAGE <mathieu.agopian@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: fr\n"
+
+#: forms.py:18
+msgid "Expiry date format must be MMYY"
+msgstr ""
+"Le format de la date d'expiration doit être MMYY (mois sur deux chiffres, et "
+"deux derniers chiffres de l'année)"
+
+#: forms.py:20
+msgid "Expiry date must be in the future"
+msgstr "La date d'expérition doit être dans le futur"
+
+#: forms.py:33
+msgid "Card CVX code"
+msgstr "Code CVX"
+
+#: forms.py:34
+msgid "Security code, three numbers from the back of the payment card"
+msgstr "Code de sécurité, trois numéros au dos de la carte de paiement"
+
+#: models.py:49
+msgid "Card owner first name"
+msgstr "Prénom du titulaire de la carte"
+
+#: models.py:51
+msgid "Card owner last name"
+msgstr "Nom du titulaire de la carte"
+
+#: models.py:55
+msgid "Format: MMYY (eg 0213 for february 2013)"
+msgstr "Format : MMYY (exemple 0213 pour février 2013)"
+
+#: models.py:58
+msgid "wallet"
+msgstr "portefeuille"
+
+#: models.py:59
+msgid "wallets"
+msgstr "portefeuilles"
+
+#: models.py:90
+msgid "Wallet holding payment information"
+msgstr "Portefeuille contenant les informations de paiement"
+
+#: models.py:92
+msgid "When the account was created"
+msgstr "Quand le compte a été créé"
+
+#: models.py:99
+msgid "transaction"
+msgstr "transaction"
+
+#: models.py:100
+msgid "transactions"
+msgstr "transactions"
+
+#: processor.py:59 processor.py:72 processor.py:99
+msgid "Payment backend failure, please try again later."
+msgstr "Erreur du terminal de paiement, veuillez réessayer plus tard."
+
+#: templates/payline/wallet_detail.html:4
+msgid "Enterprise account page: Payment details"
+msgstr "Page de compte entreprise : informations de paiement"
+
+#: templates/payline/wallet_detail_partial.html:4
+msgid "Owner's first name:"
+msgstr "Prénom du titulaire :"
+
+#: templates/payline/wallet_detail_partial.html:7
+msgid "Owner's last name:"
+msgstr "Nom du titulaire :"
+
+#: templates/payline/wallet_detail_partial.html:10
+msgid "Card type:"
+msgstr "Type de la carte :"
+
+#: templates/payline/wallet_detail_partial.html:13
+msgid "Card number:"
+msgstr "Numéro de la carte :"
+
+#: templates/payline/wallet_detail_partial.html:16
+msgid "Card expiration date:"
+msgstr "Date d'expiration de la carte :"
+
+#: templates/payline/wallet_detail_partial.html:20
+msgid "Change this card"
+msgstr "Changer cette carte"
+
+#: templates/payline/wallet_form.html:4
+msgid "Enterprise account page: change payment details"
+msgstr "Page de compte entreprise : changement des informations de paiement"
+
+#: templates/payline/wallet_form.html:7
+msgid "Fear not, this is safe!"
+msgstr "N'ayez crainte, c'est sécurisé !"
+
+#: templates/payline/wallet_form.html:8
+msgid ""
+"Check the URL in the location bar, right at the top of your browser: there's "
+"a lock on the left of the address, validating that you're on a page secured "
+"by SSL"
+msgstr ""
+"Vérifiez l'URL dans la barre d'adresse, tout en haut de votre navigateur : "
+"il y a un cadenas à gauche de l'adresse, confirmant que vous êtes sur une "
+"page sécurisée par SSL"
+
+#: templates/payline/wallet_form.html:9
+msgid ""
+"Also, we can guarantee you that we're not storing your payment card "
+"information on our servers, we're in fact trusting our PCI-DSS compliant "
+"partner:"
+msgstr ""
+"De plus, nous vous garantissons que nous ne stockons pas vos informations de "
+"paiement sur nos serveurs, pour cela nous faisons confiance à notre "
+"partenaire certifié PCI-DSS :"
+
+#: templates/payline/wallet_form.html:15
+msgid "Update wallet"
+msgstr "Mise à jour du portefeuille"
+
+#: templates/payline/wallet_form.html:15
+msgid "Create wallet"
+msgstr "Créer le portefeuille"
