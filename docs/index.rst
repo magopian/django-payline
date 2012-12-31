@@ -179,6 +179,8 @@ foreign key added to the user's profile, pointing to ``payline.models.Wallet``:
 Changes
 -------
 
+* 0.7: card expiry test correct even for last day of month
+* 0.6: french translation
 * 0.5: removed useless ordering on 'pk'
 * 0.4: fixing missing wsdl (for good)
 * 0.3: fixing wsdl (again)
