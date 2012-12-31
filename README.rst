@@ -67,8 +67,8 @@ Run the tests::
     DJANGO_SETTINGS_MODULE=payline.test_settings make test
 
 By default, two integration tests will be skipped when running the tests. Those
-integration tests need the following settings (put them in a
-``settings.py`` file)::
+integration tests need the following settings (put them in a ``settings.py``
+file)::
 
     from test_settings import *
 

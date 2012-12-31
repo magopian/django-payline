@@ -49,6 +49,41 @@ tables:
 
     python manage.py syncdb
 
+Payline API
+-----------
+
+By default, Payline's "homologation" WSDL will be used for all the API calls.
+For those to succeed, make sure you have the necessary settings:
+
+* PAYLINE_MERCHANT_ID
+* PAYLINE_KEY
+* PAYLINE_VADNBR
+
+The first one will be provided to you by a Payline sales person, and the
+following two are generated from `Payline's web admin interface`_.
+
+.. _Payline's web admin interface: https://homologation-admin.payline.com/userManager.do?reqCode=prepareLogin
+
+
+To use Payline in production, you need to provide the production merchant ID,
+API key and VAD contract number (from `Payline's production web admin
+interface`_), but you also need to point the settings at the production WSDL
+file.
+
+.. _Payline's production web admin interface: https://admin.payline.com/userManager.do?reqCode=prepareLogin
+
+To do so, you may use the following setting to point at the production WSDL
+packaged with the app (which isn't the most up to date, but the one tested):
+
+::
+
+    from os import path
+
+    import payline
+
+    wsdl = path.join(path.dirname(payline.__file__), 'DirectPaymentAPI_prod.wsdl')
+    PAYLINE_WSDL = 'file://%s' % wsdl
+
 Usage
 -----
 
@@ -179,6 +214,7 @@ foreign key added to the user's profile, pointing to ``payline.models.Wallet``:
 Changes
 -------
 
+* 0.8: production WSDL packaged
 * 0.7: card expiry test correct even for last day of month
 * 0.6: french translation
 * 0.5: removed useless ordering on 'pk'
