@@ -64,7 +64,8 @@ class Wallet(models.Model):
     def is_valid(self):
         """Return True if the card expiry date is in the future."""
         exp = expiry_date_to_datetime(self.card_expiry)
-        return exp > datetime.today()
+        today = datetime.today()
+        return exp >= expiry_date_to_datetime(today.strftime('%m%y'))
 
     def expires_this_month(self):
         """Return True if the card expiry date is in this current month."""
