@@ -7,33 +7,37 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django-Payline\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-07 10:57+0100\n"
-"PO-Revision-Date: 2012-12-07 13:17+0100\n"
+"POT-Creation-Date: 2013-01-07 04:57-0600\n"
+"PO-Revision-Date: 2013-01-07 11:56+0100\n"
 "Last-Translator: Mathieu Agopian <mathieu.agopian@novapost.fr>\n"
 "Language-Team: LANGUAGE <mathieu.agopian@gmail.com>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
-"Language: fr\n"
 
-#: forms.py:18
+#: forms.py:22
 msgid "Expiry date format must be MMYY"
 msgstr ""
 "Le format de la date d'expiration doit être MMYY (mois sur deux chiffres, et "
 "deux derniers chiffres de l'année)"
 
-#: forms.py:20
+#: forms.py:24
 msgid "Expiry date must be in the future"
 msgstr "La date d'expérition doit être dans le futur"
 
-#: forms.py:33
+#: forms.py:37
 msgid "Card CVX code"
 msgstr "Code CVX"
 
-#: forms.py:34
+#: forms.py:38
 msgid "Security code, three numbers from the back of the payment card"
 msgstr "Code de sécurité, trois numéros au dos de la carte de paiement"
+
+#: forms.py:67
+msgid "Invalid payment information"
+msgstr "Informations de paiement incorrectes"
 
 #: models.py:49
 msgid "Card owner first name"
@@ -55,23 +59,23 @@ msgstr "portefeuille"
 msgid "wallets"
 msgstr "portefeuilles"
 
-#: models.py:90
+#: models.py:91
 msgid "Wallet holding payment information"
 msgstr "Portefeuille contenant les informations de paiement"
 
-#: models.py:92
+#: models.py:93
 msgid "When the account was created"
 msgstr "Quand le compte a été créé"
 
-#: models.py:99
+#: models.py:100
 msgid "transaction"
 msgstr "transaction"
 
-#: models.py:100
+#: models.py:101
 msgid "transactions"
 msgstr "transactions"
 
-#: processor.py:59 processor.py:72 processor.py:99
+#: processor.py:60 processor.py:93 processor.py:106 processor.py:133
 msgid "Payment backend failure, please try again later."
 msgstr "Erreur du terminal de paiement, veuillez réessayer plus tard."
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-07 10:57+0100\n"
+"POT-Creation-Date: 2013-01-07 04:57-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,24 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: forms.py:18
+#: forms.py:22
 msgid "Expiry date format must be MMYY"
 msgstr ""
 
-#: forms.py:20
+#: forms.py:24
 msgid "Expiry date must be in the future"
 msgstr ""
 
-#: forms.py:33
+#: forms.py:37
 msgid "Card CVX code"
 msgstr ""
 
-#: forms.py:34
+#: forms.py:38
 msgid "Security code, three numbers from the back of the payment card"
+msgstr ""
+
+#: forms.py:67
+msgid "Invalid payment information"
 msgstr ""
 
 #: models.py:49
@@ -53,23 +57,23 @@ msgstr ""
 msgid "wallets"
 msgstr ""
 
-#: models.py:90
+#: models.py:91
 msgid "Wallet holding payment information"
 msgstr ""
 
-#: models.py:92
+#: models.py:93
 msgid "When the account was created"
 msgstr ""
 
-#: models.py:99
+#: models.py:100
 msgid "transaction"
 msgstr ""
 
-#: models.py:100
+#: models.py:101
 msgid "transactions"
 msgstr ""
 
-#: processor.py:59 processor.py:72 processor.py:99
+#: processor.py:60 processor.py:93 processor.py:106 processor.py:133
 msgid "Payment backend failure, please try again later."
 msgstr ""
 

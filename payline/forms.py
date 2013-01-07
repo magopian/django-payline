@@ -64,7 +64,7 @@ class WalletForm(forms.ModelForm):
             card_expiry=cleaned_data.get('card_expiry'),
             card_cvx=cleaned_data.get('card_cvx'))
         if not result:
-            raise forms.ValidationError(message)
+            raise forms.ValidationError(_(u'Invalid payment information'))
         return cleaned_data
 
     def save(self, commit=True):
