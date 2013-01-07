@@ -129,13 +129,19 @@ class WalletFormTest(unittest.TestCase):
                            'card_type': PAYLINE_TEST_CARD_TYPE,
                            'card_expiry': PAYLINE_TEST_CARD_EXPIRY,
                            'card_cvx': PAYLINE_TEST_CARD_CVX})
-        form.is_valid()
 
-        def fake(*args, **kwargs):
+        def fake_ok(*args, **kwargs):
+            return True, 'OK'
+
+        def fake_nok(*args, **kwargs):
             return False, 'Not OK'
 
+        with patch.object(PaylineProcessor, 'validate_card', fake_ok):
+            form.is_valid()
+
         with self.assertRaisesRegexp(WalletCreationError, 'Not OK'):
-            with patch.object(PaylineProcessor, 'create_update_wallet', fake):
+            with patch.object(PaylineProcessor, 'create_update_wallet',
+                              fake_nok):
                 form.save(commit=False)
 
 
