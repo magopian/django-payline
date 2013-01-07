@@ -10,7 +10,8 @@ from django.utils import unittest
 from mock import patch
 
 from .forms import (expiry_date_to_datetime, validate_expiry_date,
-                    obfuscate_card_number, WalletForm, UpdateWalletForm)
+                    obfuscate_card_number, WalletForm, UpdateWalletForm,
+                    WalletCreationError)
 from .models import Wallet, Transaction
 from .processor import PaylineProcessor
 
@@ -28,16 +29,14 @@ PAYLINE_TEST_CARD_CVX = "123"
 class PaylineProcessorTest(unittest.TestCase):
     """Integration test with Payline."""
     wallet_id = 'test_%s' % time()  # one wallet id for all the test cases
-
-    def setUp(self):
-        self.pp = PaylineProcessor()
-        self.wallet_data = {'wallet_id': self.wallet_id,
-                            'last_name': 'Potter',
-                            'first_name': 'Harry',
-                            'card_number': PAYLINE_TEST_CARD_NUMBER,
-                            'card_type': PAYLINE_TEST_CARD_TYPE,
-                            'card_expiry': PAYLINE_TEST_CARD_EXPIRY,
-                            'card_cvx': PAYLINE_TEST_CARD_CVX}
+    pp = PaylineProcessor()
+    wallet_data = {'wallet_id': wallet_id,
+                   'last_name': 'Potter',
+                   'first_name': 'Harry',
+                   'card_number': PAYLINE_TEST_CARD_NUMBER,
+                   'card_type': PAYLINE_TEST_CARD_TYPE,
+                   'card_expiry': PAYLINE_TEST_CARD_EXPIRY,
+                   'card_cvx': PAYLINE_TEST_CARD_CVX}
 
     def _test_create_wallet_bad_card(self):
         bad_wallet_data = self.wallet_data.copy()
@@ -56,6 +55,13 @@ class PaylineProcessorTest(unittest.TestCase):
         self.assertTrue(result)
         self.assertEqual(wallet.walletId, self.wallet_id)
 
+    def _test_update_wallet_bad_card(self):
+        bad_wallet_data = self.wallet_data.copy()
+        bad_wallet_data['card_number'] = '1234'
+        result, message = self.pp.create_update_wallet(create=False,
+                                                       **bad_wallet_data)
+        self.assertFalse(result, message)
+
     def _test_update_wallet(self):
         result, message = self.pp.create_update_wallet(create=False,
                                                        **self.wallet_data)
@@ -70,11 +76,29 @@ class PaylineProcessorTest(unittest.TestCase):
 
     def test_payline_integration(self):
         """Payline processor integration tests."""
+        # run tests in order to have wallet created before being updated
         self._test_create_wallet_bad_card()
         self._test_create_wallet()
         self._test_get_wallet()
+        self._test_update_wallet_bad_card()
         self._test_update_wallet()
         self._test_make_wallet_payment()
+
+    def test_validate_card_bad_number(self):
+        card_data = {'card_number': '1234',
+                     'card_type': PAYLINE_TEST_CARD_TYPE,
+                     'card_expiry': PAYLINE_TEST_CARD_EXPIRY,
+                     'card_cvx': PAYLINE_TEST_CARD_CVX}
+        result, message = self.pp.validate_card(**card_data)
+        self.assertFalse(result, message)
+
+    def test_validate_card(self):
+        card_data = {'card_number': PAYLINE_TEST_CARD_NUMBER,
+                     'card_type': PAYLINE_TEST_CARD_TYPE,
+                     'card_expiry': PAYLINE_TEST_CARD_EXPIRY,
+                     'card_cvx': PAYLINE_TEST_CARD_CVX}
+        result, message = self.pp.validate_card(**card_data)
+        self.assertTrue(result, message)
 
 
 class WalletFormTest(unittest.TestCase):
@@ -98,6 +122,22 @@ class WalletFormTest(unittest.TestCase):
         obfuscated = obfuscate_card_number('')
         self.assertEqual(obfuscated, '')
 
+    def test_save(self):
+        form = WalletForm({'last_name': 'Potter',
+                           'first_name': 'Harry',
+                           'card_number': PAYLINE_TEST_CARD_NUMBER,
+                           'card_type': PAYLINE_TEST_CARD_TYPE,
+                           'card_expiry': PAYLINE_TEST_CARD_EXPIRY,
+                           'card_cvx': PAYLINE_TEST_CARD_CVX})
+        form.is_valid()
+
+        def fake(*args, **kwargs):
+            return False, 'Not OK'
+
+        with self.assertRaisesRegexp(WalletCreationError, 'Not OK'):
+            with patch.object(PaylineProcessor, 'create_update_wallet', fake):
+                form.save(commit=False)
+
 
 @unittest.skipUnless(getattr(settings, 'PAYLINE_KEY', False),
                      "No settings.PAYLINE_KEY set")
@@ -114,7 +154,6 @@ class WalletFormIntegrationTest(unittest.TestCase):
                             'card_cvx': PAYLINE_TEST_CARD_CVX}
 
     def _check_local_payline_wallet(self, wallet):
-        """Local wallet mirrors wallet stored on Payline."""
         result, payline_wallet, message = self.pp.get_wallet(wallet.wallet_id)
         self.assertTrue(result)
         self.assertEqual(wallet.first_name, payline_wallet.firstName)
@@ -180,6 +219,7 @@ class WalletFormIntegrationTest(unittest.TestCase):
 
     def test_form_integration(self):
         """Form integration tests."""
+        # run tests in order to have wallet created before being updated
         self._test_wallet_form_good_card_empty_name()
         self._test_wallet_form_bad_card()
         self._test_wallet_form()

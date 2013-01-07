@@ -31,6 +31,40 @@ class PaylineProcessor(object):
                              username=self.merchant_id,
                              password=self.api_key)
 
+    def validate_card(self, card_number, card_type, card_expiry, card_cvx):
+        """Do an Authorization request to make sure the card is valid."""
+        minimum_amount = 100  # 1€ is the smallest amount authorized
+        payment = self.client.factory.create('ns1:payment')
+        payment.amount = minimum_amount
+        payment.currency = 978  # euros
+        payment.action = 100  # authorization only
+        payment.mode = 'CPT'  # CPT = comptant
+        payment.contractNumber = self.vad_number
+        order = self.client.factory.create('ns1:order')
+        order.ref = str(uuid4())
+        order.amount = minimum_amount
+        order.currency = 978
+        order.date = datetime.now().strftime("%d/%m/%Y %H:%M")
+        card = self.client.factory.create('ns1:card')
+        card.number = card_number
+        card.type = card_type
+        card.expirationDate = card_expiry
+        card.cvx = card_cvx
+        try:
+            res = self.client.service.doAuthorization(payment=payment,
+                                                      order=order,
+                                                      card=card)
+        except WebFault:
+            logger.error("Payment backend failure", exc_info=True)
+            return (False, None,
+                    _("Payment backend failure, please try again later."))
+        result = (res.result.code == "00000",  # success ?
+                  res.result.shortMessage + ': ' + res.result.longMessage)
+        if result[0]:  # authorization was successful, now cancel it (clean up)
+            self.client.service.doReset(transactionID=res.transaction.id,
+                                        comment='Card validation cleanup')
+        return result
+
     def create_update_wallet(self, wallet_id, last_name, first_name,
                              card_number, card_type, card_expiry, card_cvx,
                              create=True):

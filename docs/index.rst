@@ -91,7 +91,7 @@ You need to add to your project:
 
 * the URLs
 * if you need something different than the default scenario, an implementation
-  of the payment login.
+  of the payment process.
 
 .. note:: Some very basic templates are provided if you need to use or extend
           them.
@@ -108,30 +108,19 @@ Add some URLs in ``payment/urls.py``:
 
     from django.conf.urls.defaults import patterns, url
 
-    from payment import views
+    from payline.views import ViewWallet, CreateWallet, UpdateWallet
 
 
     urlpatterns = patterns(
         '',
-        url(r'^wallet/$', views.view_wallet, name='view_wallet'),
-        url(r'^wallet/new/$', views.create_wallet, name='create_wallet'),
-        url(r'^wallet/update/$', views.update_wallet, name='update_wallet'),
+        url(r'^wallet/$', ViewWallet.as_view(), name='view_wallet'),
+        url(r'^wallet/new/$', CreateWallet.as_view(), name='create_wallet'),
+        url(r'^wallet/update/$', UpdateWallet.as_view(), name='update_wallet'),
     )
-
-Finally, add the ``payment/views.py`` you referenced in ``urls.py``:
-
-.. code-block:: python
-
-    from payline.views import ViewWallet, CreateWallet, UpdateWallet
-
-
-    view_wallet = ViewWallet.as_view()
-    update_wallet = UpdateWallet.as_view()
-    create_wallet = CreateWallet.as_view()
 
 You can now create wallets, update them, view them, and use them:
 
-* ``make_payment``: takes an amount in Euros (€), and ask Payline to make a
+* ``make_payment``: takes an amount in Euros (€), and asks Payline to make a
   payment from this *wallet*
 * ``is_valid``: returns True if the card expiry date is in the future
 * ``expires_this_month``: returns True if the card expires this month

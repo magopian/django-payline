@@ -10,6 +10,10 @@ from .models import Wallet, get_uuid4, expiry_date_to_datetime
 from .processor import PaylineProcessor
 
 
+class WalletCreationError(Exception):
+    pass
+
+
 def validate_expiry_date(expiry_date):
     """Validate that the expiry date is valid."""
     try:
@@ -50,26 +54,34 @@ class WalletForm(forms.ModelForm):
         return expiry_date
 
     def clean(self):
-        """Validate that the card is correct by creating a Payline wallet."""
+        """Validate that the card is correct."""
         cleaned_data = super(WalletForm, self).clean()
-        # do not attempt a creation or update of wallet unless form is valid
-        if self.errors:
+        if self.errors:  # do not even bother unless form is valid
             return cleaned_data
-        result, message = self.pp.create_update_wallet(
-            wallet_id=self.wallet_id,
-            last_name=cleaned_data.get('last_name'),
-            first_name=cleaned_data.get('first_name'),
+        result, message = self.pp.validate_card(
             card_number=cleaned_data.get('card_number'),
             card_type=cleaned_data.get('card_type'),
             card_expiry=cleaned_data.get('card_expiry'),
-            card_cvx=cleaned_data.get('card_cvx'),
-            create=self.create)
+            card_cvx=cleaned_data.get('card_cvx'))
         if not result:
             raise forms.ValidationError(message)
         return cleaned_data
 
     def save(self, commit=True):
         """Create wallet on Payline."""
+        cleaned = self.cleaned_data
+        result, message = self.pp.create_update_wallet(
+            wallet_id=self.wallet_id,
+            last_name=cleaned['last_name'],
+            first_name=cleaned['first_name'],
+            card_number=cleaned['card_number'],
+            card_type=cleaned['card_type'],
+            card_expiry=cleaned['card_expiry'],
+            card_cvx=cleaned['card_cvx'],
+            create=self.create)
+        if not result:  # failed creating the wallet
+            raise WalletCreationError(message)
+        # create the wallet locally
         wallet = super(WalletForm, self).save(commit=commit)
         wallet.wallet_id = self.wallet_id
         wallet.card_number = obfuscate_card_number(wallet.card_number)
