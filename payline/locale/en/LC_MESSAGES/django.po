@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 04:57-0600\n"
+"POT-Creation-Date: 2013-01-18 05:10-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,38 +38,58 @@ msgid "Invalid payment information"
 msgstr ""
 
 #: models.py:49
+msgid "First name"
+msgstr ""
+
+#: models.py:49
 msgid "Card owner first name"
+msgstr ""
+
+#: models.py:51
+msgid "Last name"
 msgstr ""
 
 #: models.py:51
 msgid "Card owner last name"
 msgstr ""
 
-#: models.py:55
+#: models.py:52
+msgid "Card number"
+msgstr ""
+
+#: models.py:54
+msgid "Card type"
+msgstr ""
+
+#: models.py:56
+msgid "Card expiry"
+msgstr ""
+
+#: models.py:57
 msgid "Format: MMYY (eg 0213 for february 2013)"
 msgstr ""
 
-#: models.py:58
+#: models.py:60
 msgid "wallet"
 msgstr ""
 
-#: models.py:59
+#: models.py:61
 msgid "wallets"
 msgstr ""
 
-#: models.py:91
+#: models.py:93
 msgid "Wallet holding payment information"
 msgstr ""
 
-#: models.py:93
+#: models.py:95
 msgid "When the account was created"
 msgstr ""
 
-#: models.py:100
+#: models.py:102
 msgid "transaction"
 msgstr ""
 
-#: models.py:101
+#: models.py:103
 msgid "transactions"
 msgstr ""
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Django-Payline\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-07 04:57-0600\n"
-"PO-Revision-Date: 2013-01-07 11:56+0100\n"
+"POT-Creation-Date: 2013-01-18 05:10-0600\n"
+"PO-Revision-Date: 2013-01-18 12:54+0100\n"
 "Last-Translator: Mathieu Agopian <mathieu.agopian@novapost.fr>\n"
 "Language-Team: LANGUAGE <mathieu.agopian@gmail.com>\n"
 "Language: fr\n"
@@ -29,7 +29,7 @@ msgstr "La date d'expérition doit être dans le futur"
 
 #: forms.py:37
 msgid "Card CVX code"
-msgstr "Code CVX"
+msgstr "Code sécurité"
 
 #: forms.py:38
 msgid "Security code, three numbers from the back of the payment card"
@@ -40,38 +40,58 @@ msgid "Invalid payment information"
 msgstr "Informations de paiement incorrectes"
 
 #: models.py:49
+msgid "First name"
+msgstr "Prénom"
+
+#: models.py:49
 msgid "Card owner first name"
 msgstr "Prénom du titulaire de la carte"
+
+#: models.py:51
+msgid "Last name"
+msgstr "Nom de famille"
 
 #: models.py:51
 msgid "Card owner last name"
 msgstr "Nom du titulaire de la carte"
 
-#: models.py:55
+#: models.py:52
+msgid "Card number"
+msgstr "Numéro de la carte"
+
+#: models.py:54
+msgid "Card type"
+msgstr "Type de la carte"
+
+#: models.py:56
+msgid "Card expiry"
+msgstr "Date d'expiration"
+
+#: models.py:57
 msgid "Format: MMYY (eg 0213 for february 2013)"
 msgstr "Format : MMYY (exemple 0213 pour février 2013)"
 
-#: models.py:58
+#: models.py:60
 msgid "wallet"
 msgstr "portefeuille"
 
-#: models.py:59
+#: models.py:61
 msgid "wallets"
 msgstr "portefeuilles"
 
-#: models.py:91
+#: models.py:93
 msgid "Wallet holding payment information"
 msgstr "Portefeuille contenant les informations de paiement"
 
-#: models.py:93
+#: models.py:95
 msgid "When the account was created"
 msgstr "Quand le compte a été créé"
 
-#: models.py:100
+#: models.py:102
 msgid "transaction"
 msgstr "transaction"
 
-#: models.py:101
+#: models.py:103
 msgid "transactions"
 msgstr "transactions"
 

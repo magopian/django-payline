@@ -46,13 +46,15 @@ class Wallet(models.Model):
         max_length=36, default=get_uuid4,
         editable=False, db_index=True, unique=True)
     first_name = models.CharField(
-        max_length=30, help_text=_("Card owner first name"))
+        _("First name"), max_length=30, help_text=_("Card owner first name"))
     last_name = models.CharField(
-        max_length=30, help_text=_("Card owner last name"))
-    card_number = models.CharField(max_length=20)
-    card_type = models.CharField(max_length=20, choices=CARD_TYPE_CHOICES)
+        _("Last name"), max_length=30, help_text=_("Card owner last name"))
+    card_number = models.CharField(_("Card number"), max_length=20)
+    card_type = models.CharField(
+        _("Card type"), max_length=20, choices=CARD_TYPE_CHOICES)
     card_expiry = models.CharField(
-        max_length=4, help_text=_("Format: MMYY (eg 0213 for february 2013)"))
+        _("Card expiry"), max_length=4,
+        help_text=_("Format: MMYY (eg 0213 for february 2013)"))
 
     class Meta:
         verbose_name = _("wallet")
