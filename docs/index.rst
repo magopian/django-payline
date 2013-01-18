@@ -203,6 +203,8 @@ foreign key added to the user's profile, pointing to ``payline.models.Wallet``:
 Changes
 -------
 
+* 0.10: properly fake/mock payline for non-integration tests
+* 0.9: better validation of the payment card (authorize first)
 * 0.8: production WSDL packaged
 * 0.7: card expiry test correct even for last day of month
 * 0.6: french translation
