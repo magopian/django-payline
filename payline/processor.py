@@ -27,6 +27,8 @@ class PaylineProcessor(object):
         self.merchant_id = getattr(settings, 'PAYLINE_MERCHANT_ID', '')
         self.api_key = getattr(settings, 'PAYLINE_KEY', '')
         self.vad_number = getattr(settings, 'PAYLINE_VADNBR', '')
+        # Fallback to Euro if no currency code is defined in the settings.
+        self.currency_code = getattr(settings, 'PAYLINE_CURRENCY_CODE', 978)
         self.client = Client(url=self.wsdl,
                              username=self.merchant_id,
                              password=self.api_key)
@@ -36,14 +38,14 @@ class PaylineProcessor(object):
         minimum_amount = 100  # 1€ is the smallest amount authorized
         payment = self.client.factory.create('ns1:payment')
         payment.amount = minimum_amount
-        payment.currency = 978  # euros
+        payment.currency = self.currency_code
         payment.action = 100  # authorization only
         payment.mode = 'CPT'  # CPT = comptant
         payment.contractNumber = self.vad_number
         order = self.client.factory.create('ns1:order')
         order.ref = str(uuid4())
         order.amount = minimum_amount
-        order.currency = 978
+        order.currency = self.currency_code
         order.date = datetime.now().strftime("%d/%m/%Y %H:%M")
         card = self.client.factory.create('ns1:card')
         card.number = card_number
@@ -113,14 +115,14 @@ class PaylineProcessor(object):
         amount_cents = amount * 100  # use the smallest unit possible (cents)
         payment = self.client.factory.create('ns1:payment')
         payment.amount = amount_cents
-        payment.currency = 978  # euros
+        payment.currency = self.currency_code
         payment.action = 101  # authorization + validation = payment
         payment.mode = 'CPT'  # CPT = comptant
         payment.contractNumber = self.vad_number
         order = self.client.factory.create('ns1:order')
         order.ref = str(uuid4())
         order.amount = amount_cents
-        order.currency = 978
+        order.currency = self.currency_code
         order.date = datetime.now().strftime("%d/%m/%Y %H:%M")
         try:
             res = self.client.service.doImmediateWalletPayment(
