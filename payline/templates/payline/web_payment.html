@@ -1,0 +1,14 @@
+{% extends base_template|default:"base.html" %}
+{% load i18n %}
+
+{% block title %}Webpayment test{% endblock %}
+
+
+{% block content %}
+<form action="" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input class="btn btn-primary" type="submit" value="Pay" />
+</form>
+{% endblock %}
+

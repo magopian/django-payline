@@ -100,3 +100,22 @@ class UpdateWalletForm(WalletForm):
         self.initial['card_type'] = None
         self.initial['card_expiry'] = ''
         self.initial['card_cvx'] = ''
+
+
+class WebPaymentForm(forms.Form):
+    amount = forms.CharField()
+
+    def __init__(self):
+        self.order_ref = get_uuid4()
+        self.redirect_url = None
+
+    def clean(self):
+        amount = self.cleaned_data['amount']
+        pp = PaylineProcessor()
+        success, redirect_url, trans_id, message = pp.make_web_payment(
+            self.order_ref, amount
+        )
+        if success:
+            self.redirect_url = redirect_url
+        else:
+            raise forms.ValidationError(message)

@@ -21,6 +21,8 @@ class PaylineProcessor(object):
     AUTHORIZE = 100
     AUTHORIZE_AND_VALIDATE = 101
 
+    PAYMENT_SUCCESS = "00000"
+
     def __init__(self):
         """Instantiate suds client."""
         here = path.abspath(path.dirname(__file__))
@@ -63,7 +65,7 @@ class PaylineProcessor(object):
             logger.error("Payment backend failure", exc_info=True)
             return (False, None,
                     _("Payment backend failure, please try again later."))
-        result = (res.result.code == "00000",  # success ?
+        result = (res.result.code == self.PAYMENT_SUCCESS,
                   res.result.shortMessage + ': ' + res.result.longMessage)
         if result[0]:  # authorization was successful, now cancel it (clean up)
             self.client.service.doReset(transactionID=res.transaction.id,
@@ -136,6 +138,43 @@ class PaylineProcessor(object):
             logger.error("Payment backend failure", exc_info=True)
             return (False, None,
                     _("Payment backend failure, please try again later."))
-        return (res.result.code == "00000",  # success ?
+        return (res.result.code == self.PAYMENT_SUCCESS,
+                res.transaction.id,
+                res.result.shortMessage + ': ' + res.result.longMessage)
+
+    def make_web_payment(self, order_ref, amount):
+        amount_cents = amount * 100
+        payment = self.client.factory.create('ns1:payment')
+        payment.amount = amount_cents
+        payment.currency = self.currency_code
+        payment.action = self.AUTHORIZE_AND_VALIDATE
+        payment.mode = 'CPT'
+        payment.contractNumber = self.vad_number
+
+        order = self.client.factory.create('ns1:order')
+        order.ref = order_ref
+        order.amount = amount_cents
+        order.currency = self.currency_code
+        order.date = datetime.now().strftime("%d/%m/%Y %H:%M")
+
+        return_url = getattr(settings, 'PAYLINE_RETURN_URL', '')
+        cancel_url = getattr(settings, 'PAYLINE_CANCEL_URL', '')
+        notification_url = getattr(settings, 'PAYLINE_NOTIFICATION_URL', '')
+
+        try:
+            res = self.client.service.doWebPayment(
+                payment=payment,
+                returnURL=return_url,
+                cancelURL=cancel_url,
+                order=order,
+                notificationURL=notification_url,
+                selectedContractList=(self.vad_number, )
+            )
+        except WebFault:
+            logger.error("Payment backend failure", exc_info=True)
+            return (False, None,
+                    _("Payment backend failure, please try again later."))
+        return (res.result.code == self.PAYMENT_SUCCESS,
+                res.result.redirectURL,
                 res.transaction.id,
                 res.result.shortMessage + ': ' + res.result.longMessage)
