@@ -18,6 +18,9 @@ logger = getLogger('payline')
 class PaylineProcessor(object):
     """Payline Payment Backend."""
 
+    AUTHORIZE = 100
+    AUTHORIZE_AND_VALIDATE = 101
+
     def __init__(self):
         """Instantiate suds client."""
         here = path.abspath(path.dirname(__file__))
@@ -39,7 +42,7 @@ class PaylineProcessor(object):
         payment = self.client.factory.create('ns1:payment')
         payment.amount = minimum_amount
         payment.currency = self.currency_code
-        payment.action = 100  # authorization only
+        payment.action = self.AUTHORIZE
         payment.mode = 'CPT'  # CPT = comptant
         payment.contractNumber = self.vad_number
         order = self.client.factory.create('ns1:order')
@@ -116,7 +119,7 @@ class PaylineProcessor(object):
         payment = self.client.factory.create('ns1:payment')
         payment.amount = amount_cents
         payment.currency = self.currency_code
-        payment.action = 101  # authorization + validation = payment
+        payment.action = self.AUTHORIZE_AND_VALIDATE
         payment.mode = 'CPT'  # CPT = comptant
         payment.contractNumber = self.vad_number
         order = self.client.factory.create('ns1:order')
