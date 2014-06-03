@@ -13,5 +13,4 @@ INSTALLED_APPS = [
     'payline',
 ]
 
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
 SECRET_KEY = 'better make this secret'
