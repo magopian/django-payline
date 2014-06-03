@@ -25,19 +25,25 @@ class PaylineProcessor(object):
 
     def __init__(self):
         """Instantiate suds client."""
-        here = path.abspath(path.dirname(__file__))
-        self.wsdl = getattr(
-            settings, 'PAYLINE_WSDL',
-            'file://%s' % path.join(here, 'PaylineAPI.wsdl')
-        )
-        self.merchant_id = getattr(settings, 'PAYLINE_MERCHANT_ID', '')
-        self.api_key = getattr(settings, 'PAYLINE_KEY', '')
+        wsdl_dir = path.join(path.abspath(path.dirname(__file__)), 'wsdl/v4_0')
+
+        payline_api = getattr(settings, 'PAYLINE_API', 'DirectPayment')
+        if payline_api not in ('DirectPayment', 'WebPayment', 'MassPayment'):
+            raise ValueError("Unsupported Payline API: %s" % payline_api)
+
+        debug_mode = getattr(settings, 'PAYLINE_DEBUG', True)
+        environment = 'homologation' if debug_mode else 'production'
+        wsdl_path = path.join(wsdl_dir, environment, "%sAPI.wsdl" % payline_api)
+        wsdl_uri = 'file://%s' % wsdl_path
+
+        merchant_id = getattr(settings, 'PAYLINE_MERCHANT_ID', '')
+        api_key = getattr(settings, 'PAYLINE_KEY', '')
         self.vad_number = getattr(settings, 'PAYLINE_VADNBR', '')
         # Fallback to Euro if no currency code is defined in the settings.
         self.currency_code = getattr(settings, 'PAYLINE_CURRENCY_CODE', 978)
-        self.client = Client(url=self.wsdl,
-                             username=self.merchant_id,
-                             password=self.api_key)
+        self.client = Client(url=wsdl_uri,
+                             username=merchant_id,
+                             password=api_key)
 
     def validate_card(self, card_number, card_type, card_expiry, card_cvx):
         """Do an Authorization request to make sure the card is valid."""
