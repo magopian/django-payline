@@ -184,3 +184,10 @@ class PaylineProcessor(object):
         return (res.result.code == self.PAYMENT_SUCCESS,
                 res.redirectURL,
                 res.result.shortMessage + ': ' + res.result.longMessage)
+
+    def get_web_payment_details(self, token):
+        res = self.client.service.getWebPaymentDetails(
+            version=3,
+            token=token,
+        )
+        return (res.result.code == self.PAYMENT_SUCCESS, res)
