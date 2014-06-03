@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from datetime import datetime, timedelta
-
 from uuid import uuid4
 
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 try:  # available from Django1.4
     from django.utils.timezone import now
 except ImportError:
@@ -91,13 +91,22 @@ class Transaction(models.Model):
         Wallet, null=True, blank=True,
         on_delete=models.SET_NULL,  # do never ever delete
         help_text=_("Wallet holding payment information"))
-    date = models.DateTimeField(
-        default=now, help_text=_("When the account was created"))
+    date = models.DateTimeField(help_text=_("When the transaction was made"))
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     transaction_id = models.CharField(
-        max_length=36, editable=False, db_index=True, unique=True)
+        _("Unique Payline identifier"),
+        max_length=36, editable=False, blank=True
+    )
+    token = models.CharField(
+        _("Timestamped token used to identify the transaction"),
+        max_length=36, editable=False, unique=True
+    )
+    result_code = models.CharField(
+        _("Transaction success code"), blank=True
+    )
+    order_type = models.ForeignKey(ContentType)
+    order_id = models.PositiveIntegerField()
+    order_object = models.GenericForeignKey('order_type', 'order_id')
 
     class Meta:
         ordering = ('-date',)
-        verbose_name = _("transaction")
-        verbose_name_plural = _("transactions")
