@@ -7,7 +7,6 @@ env:
   - DJANGO_VERSION=1.4
 before_install:
   - export PIP_USE_MIRRORS=true
-  - export PIP_INDEX_URL=https://simple.crate.io/
   - export DJANGO_SETTINGS_MODULE=payline.test_settings
 install:
   - pip install -e .
