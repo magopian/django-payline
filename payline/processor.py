@@ -28,7 +28,8 @@ class PaylineProcessor(object):
         here = path.abspath(path.dirname(__file__))
         self.wsdl = getattr(
             settings, 'PAYLINE_WSDL',
-            'file://%s' % path.join(here, 'DirectPaymentAPI.wsdl'))
+            'file://%s' % path.join(here, 'PaylineAPI.wsdl')
+        )
         self.merchant_id = getattr(settings, 'PAYLINE_MERCHANT_ID', '')
         self.api_key = getattr(settings, 'PAYLINE_KEY', '')
         self.vad_number = getattr(settings, 'PAYLINE_VADNBR', '')
@@ -143,7 +144,7 @@ class PaylineProcessor(object):
                 res.result.shortMessage + ': ' + res.result.longMessage)
 
     def make_web_payment(self, order_ref, amount):
-        amount_cents = amount * 100
+        amount_cents = int(float(amount) * 100)
         payment = self.client.factory.create('ns1:payment')
         payment.amount = amount_cents
         payment.currency = self.currency_code
@@ -175,6 +176,5 @@ class PaylineProcessor(object):
             return (False, None,
                     _("Payment backend failure, please try again later."))
         return (res.result.code == self.PAYMENT_SUCCESS,
-                res.result.redirectURL,
-                res.transaction.id,
+                res.redirectURL,
                 res.result.shortMessage + ': ' + res.result.longMessage)

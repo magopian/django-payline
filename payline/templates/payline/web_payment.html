@@ -4,7 +4,7 @@
 {% block title %}Webpayment test{% endblock %}
 
 
-{% block content %}
+{% block main %}
 <form action="" method="post">
   {% csrf_token %}
   {{ form.as_p }}

@@ -105,14 +105,15 @@ class UpdateWalletForm(WalletForm):
 class WebPaymentForm(forms.Form):
     amount = forms.CharField()
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(WebPaymentForm, self).__init__(*args, **kwargs)
         self.order_ref = get_uuid4()
         self.redirect_url = None
 
     def clean(self):
         amount = self.cleaned_data['amount']
         pp = PaylineProcessor()
-        success, redirect_url, trans_id, message = pp.make_web_payment(
+        success, redirect_url, message = pp.make_web_payment(
             self.order_ref, amount
         )
         if success:
