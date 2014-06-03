@@ -113,10 +113,9 @@ class WebPaymentForm(forms.Form):
     def clean(self):
         amount = self.cleaned_data['amount']
         pp = PaylineProcessor()
-        success, redirect_url, message = pp.make_web_payment(
-            self.order_ref, amount
-        )
+        success, result = pp.make_web_payment(self.order_ref, amount)
         if success:
-            self.redirect_url = redirect_url
+            token = result.token
+            self.redirect_url = result.redirectURL
         else:
-            raise forms.ValidationError(message)
+            raise forms.ValidationError("Error processing payment")

@@ -169,7 +169,7 @@ class PaylineProcessor(object):
         notification_url = getattr(settings, 'PAYLINE_NOTIFICATION_URL', '')
 
         try:
-            res = self.client.service.doWebPayment(
+            result = self.client.service.doWebPayment(
                 payment=payment,
                 returnURL=return_url,
                 cancelURL=cancel_url,
@@ -179,15 +179,12 @@ class PaylineProcessor(object):
             )
         except WebFault:
             logger.error("Payment backend failure", exc_info=True)
-            return (False, None,
-                    _("Payment backend failure, please try again later."))
-        return (res.result.code == self.PAYMENT_SUCCESS,
-                res.redirectURL,
-                res.result.shortMessage + ': ' + res.result.longMessage)
+            return (False, None)
+        return (result.result.code == self.PAYMENT_SUCCESS, result)
 
     def get_web_payment_details(self, token):
-        res = self.client.service.getWebPaymentDetails(
+        result = self.client.service.getWebPaymentDetails(
             version=3,
             token=token,
         )
-        return (res.result.code == self.PAYMENT_SUCCESS, res)
+        return (result.result.code == self.PAYMENT_SUCCESS, result)
