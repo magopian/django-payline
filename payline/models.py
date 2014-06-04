@@ -112,5 +112,8 @@ class Transaction(models.Model):
     order_id = models.PositiveIntegerField(null=True)
     order_object = GenericForeignKey('order_type', 'order_id')
 
+    def __unicode__(self):
+        return "Transaction %s" % self.transaction_id
+
     class Meta:
         ordering = ('-date',)
