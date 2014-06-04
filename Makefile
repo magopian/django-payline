@@ -7,6 +7,8 @@ translate:
 
 install-deps:
 	pip install -r requirements.txt
+	pip install "Django>=1.3"
+	pip install South
 
 clean:
 	find . -name "*.pyc" -delete
