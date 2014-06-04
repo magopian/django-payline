@@ -10,6 +10,7 @@ DATABASES = {
 }
 
 INSTALLED_APPS = [
+    'south',
     'payline',
 ]
 
