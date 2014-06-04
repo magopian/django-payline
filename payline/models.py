@@ -94,7 +94,8 @@ class Transaction(models.Model):
         Wallet, null=True, blank=True,
         on_delete=models.SET_NULL,  # do never ever delete
         help_text=_("Wallet holding payment information"))
-    date = models.DateTimeField(help_text=_("When the transaction was made"))
+    date = models.DateTimeField(help_text=_("When the transaction was made"),
+                                null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     transaction_id = models.CharField(
         _("Unique Payline identifier"),
