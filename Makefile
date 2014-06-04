@@ -4,3 +4,9 @@ test:
 
 translate:
 	cd payline && django-admin.py makemessages --settings=payline.settings -a
+
+install-deps:
+	pip install -r requirements.txt
+
+clean:
+	find . -name "*.pyc" -delete
