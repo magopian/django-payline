@@ -102,13 +102,14 @@ class Transaction(models.Model):
     )
     token = models.CharField(
         _("Timestamped token used to identify the transaction"),
-        max_length=36, editable=False, unique=True
+        max_length=36, editable=False, unique=True, default=get_uuid4
     )
     result_code = models.CharField(
         _("Transaction success code"), max_length=8, blank=True
     )
-    order_type = models.ForeignKey(ContentType)
-    order_id = models.PositiveIntegerField()
+    order_type = models.ForeignKey(ContentType, null=True,
+                                   on_delete=models.SET_NULL)
+    order_id = models.PositiveIntegerField(null=True)
     order_object = GenericForeignKey('order_type', 'order_id')
 
     class Meta:
