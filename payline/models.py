@@ -4,7 +4,10 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
+try:  # changed in Django 1.7
+    from django.contrib.contenttypes.fields import GenericForeignKey
+except ImportError:
+    from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 try:  # available from Django1.4
     from django.utils.timezone import now
@@ -102,11 +105,11 @@ class Transaction(models.Model):
         max_length=36, editable=False, unique=True
     )
     result_code = models.CharField(
-        _("Transaction success code"), blank=True
+        _("Transaction success code"), max_length=8, blank=True
     )
     order_type = models.ForeignKey(ContentType)
     order_id = models.PositiveIntegerField()
-    order_object = models.GenericForeignKey('order_type', 'order_id')
+    order_object = GenericForeignKey('order_type', 'order_id')
 
     class Meta:
         ordering = ('-date',)
