@@ -114,7 +114,16 @@ class Transaction(models.Model):
     order_object = GenericForeignKey('order_type', 'order_id')
 
     def __unicode__(self):
-        return "Transaction %s" % self.transaction_id
+        return "Transaction %s for order %s" % (
+            self.transaction_id, self.order_id
+        )
 
     class Meta:
         ordering = ('-date',)
+
+    def validate(self, payment_details):
+        self.result_code = payment_details.result.code
+        self.date = datetime.strptime(payment_details.transaction.date,
+                                      '%d/%m/%Y %H:%M')
+        self.transaction_id = payment_details.transaction.id
+        self.save()

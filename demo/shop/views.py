@@ -1,8 +1,9 @@
-from django.http import Http404
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from . import models
 from payline.processor import PaylineProcessor
 from payline.forms import WebPaymentForm
+from payline.models import Transaction
 
 
 def home(request):
@@ -29,16 +30,24 @@ def order_pay(request, order_id):
 
 
 def payment_success(request):
+    payment_notify(request)
     return render(request, 'payment_success.html')
 
 
 def payment_cancel(request):
+    payment_notify(request)
     return render(request, 'payment_cancel.html')
 
 
 def payment_notify(request):
     token = request.GET.get('token')
-    if not token:
-        raise Http404
+    transaction = get_object_or_404(Transaction, token=token)
+    order = transaction.order_object
     pp = PaylineProcessor()
     success, payment_details = pp.get_web_payment_details(token)
+    if success:
+        transaction.validate(payment_details)
+        order.validate()
+    else:
+        order.cancel()
+    return HttpResponse('ok')
