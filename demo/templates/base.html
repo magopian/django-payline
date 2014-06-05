@@ -33,6 +33,16 @@
         border: none;
         border-radius: 5px;
       }
+      footer {
+        position: absolute;
+        bottom: 0px;
+        padding: 10px 0;
+      }
+      footer a {
+        color: #888;
+        font-size: .8em;
+        padding-right: 20px;
+      }
     </style>
   </head>
   <body>
@@ -41,5 +51,10 @@
         <h1>Django-payline Demo</h1>
       </header>
       {% block content %}{% endblock %}
+      <footer>
+        <a href='/'>Home</a>
+        <a href='https://github.com/magopian/django-payline'>Github</a>
+        <a href='https://readthedocs.org/projects/django-payline/'>Read the docs</a>
+      </footer>
   </body>
 </html>
