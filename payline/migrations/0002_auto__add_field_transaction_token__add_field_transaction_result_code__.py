@@ -8,9 +8,6 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Removing index on 'Transaction', fields ['transaction_id']
-        db.delete_index(u'payline_transaction', ['transaction_id'])
-
         # Removing unique constraint on 'Transaction', fields ['transaction_id']
         db.delete_unique(u'payline_transaction', ['transaction_id'])
 
@@ -50,9 +47,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'Transaction.order_id'
         db.delete_column(u'payline_transaction', 'order_id')
-
-        # Adding unique constraint on 'Transaction', fields ['transaction_id']
-        db.create_unique(u'payline_transaction', ['transaction_id'])
 
 
     models = {
