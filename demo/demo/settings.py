@@ -10,7 +10,6 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -25,13 +24,10 @@ DATABASES = {
 }
 
 PAYLINE_API = 'WebPayment'
-PAYLINE_MERCHANT_ID = os.environ.get('PAYLINE_MERCHANT_ID')
-PAYLINE_KEY = os.environ.get('PAYLINE_KEY')
 PAYLINE_RETURN_URL = 'http://localhost:8000/payment-success/'
 PAYLINE_CANCEL_URL = 'http://localhost:8000/payment-cancel/'
 PAYLINE_NOTIFICATION_URL = 'http://localhost:8000/payment-notify/'
 
-PAYLINE_VADNBR = os.environ.get('PAYLINE_VADNBR')
 ROOT_URLCONF = 'demo.urls'
 STATIC_URL = '/static/'
 

@@ -38,14 +38,13 @@ class PaylineProcessor(object):
         wsdl_uri = 'file://%s' % wsdl_path
 
         merchant_id = getattr(settings, 'PAYLINE_MERCHANT_ID', '')
-        if not merchant_id:
-            raise ImproperlyConfigured('Missing setting: PAYLINE_MERCHANT_ID')
         api_key = getattr(settings, 'PAYLINE_KEY', '')
-        if not api_key:
-            raise ImproperlyConfigured('Missing setting: PAYLINE_KEY')
         self.vad_number = getattr(settings, 'PAYLINE_VADNBR', '')
-        if not self.vad_number:
-            raise ImproperlyConfigured('Missing setting: PAYLINE_VADNBR')
+        if api_key:
+            if not merchant_id:
+                raise ImproperlyConfigured('Missing: PAYLINE_MERCHANT_ID')
+            if not self.vad_number:
+                raise ImproperlyConfigured('Missing: PAYLINE_VADNBR')
         # Fallback to Euro if no currency code is defined in the settings.
         self.currency_code = getattr(settings, 'PAYLINE_CURRENCY_CODE', 978)
         self.client = Client(url=wsdl_uri,
