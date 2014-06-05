@@ -99,11 +99,11 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     transaction_id = models.CharField(
         _("Unique Payline identifier"),
-        max_length=36, editable=False, blank=True
+        max_length=50, editable=False, blank=True
     )
     token = models.CharField(
         _("Timestamped token used to identify the transaction"),
-        max_length=36, editable=False, unique=True, default=get_uuid4
+        max_length=36, unique=True,
     )
     result_code = models.CharField(
         _("Transaction success code"), max_length=8, blank=True

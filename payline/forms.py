@@ -6,7 +6,7 @@ from datetime import datetime
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Wallet, get_uuid4, expiry_date_to_datetime
+from .models import Wallet, Transaction, get_uuid4, expiry_date_to_datetime
 from .processor import PaylineProcessor
 
 
@@ -102,20 +102,34 @@ class UpdateWalletForm(WalletForm):
         self.initial['card_cvx'] = ''
 
 
-class WebPaymentForm(forms.Form):
-    amount = forms.CharField()
+class WebPaymentForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['token', 'amount']
 
     def __init__(self, *args, **kwargs):
-        super(WebPaymentForm, self).__init__(*args, **kwargs)
-        self.order_ref = get_uuid4()
         self.redirect_url = None
+        self.amount = kwargs.pop('amount')
+        self.order_ref = kwargs.pop('order_ref')
+        super(WebPaymentForm, self).__init__(*args, **kwargs)
+        self.fields['amount'].required = False
+        self.fields['amount'].widget = forms.HiddenInput()
+        self.fields['token'].required = False
+        self.fields['token'].widget = forms.HiddenInput()
 
-    def clean(self):
-        amount = self.cleaned_data['amount']
+    def clean_token(self):
         pp = PaylineProcessor()
-        success, result = pp.make_web_payment(self.order_ref, amount)
+        success, result = pp.make_web_payment(self.order_ref, self.amount)
         if success:
             token = result.token
             self.redirect_url = result.redirectURL
         else:
-            raise forms.ValidationError("Error processing payment")
+            try:
+                msg = result.result.longMessage
+            except AttributeError:
+                msg = 'no response received'
+            raise forms.ValidationError("Error processing payment: %s" % msg)
+        return token
+
+    def clean_amount(self):
+        return self.amount

@@ -7,6 +7,7 @@ from os import path
 from uuid import uuid4
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext as _
 from suds import WebFault
 from suds.client import Client
