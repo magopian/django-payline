@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action='.' method='post'>
+  {% csrf_token %}
+  <legend>Create an order (100 €)</legend>
+  <input type="submit" class='btn' value='Proceed to payment'>
+</form>
+{% endblock %}
