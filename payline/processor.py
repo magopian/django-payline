@@ -34,7 +34,8 @@ class PaylineProcessor(object):
 
         debug_mode = getattr(settings, 'PAYLINE_DEBUG', True)
         environment = 'homologation' if debug_mode else 'production'
-        wsdl_path = path.join(wsdl_dir, environment, "%sAPI.wsdl" % payline_api)
+        wsdl_path = path.join(wsdl_dir, environment,
+                              "{0}API.wsdl".format(payline_api))
         wsdl_uri = 'file://%s' % wsdl_path
 
         merchant_id = getattr(settings, 'PAYLINE_MERCHANT_ID', '')

@@ -7,12 +7,8 @@ from django.db import models
 try:  # changed in Django 1.7
     from django.contrib.contenttypes.fields import GenericForeignKey
 except ImportError:
-    from django.contrib.contenttypes.generic import GenericForeignKey
+    from django.contrib.contenttypes.generic import GenericForeignKey  # noqa
 from django.contrib.contenttypes.models import ContentType
-try:  # available from Django1.4
-    from django.utils.timezone import now
-except ImportError:
-    now = datetime.now
 
 from django.utils.translation import ugettext_lazy as _
 
