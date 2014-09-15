@@ -3,3 +3,5 @@ dist
 docs/_build
 .coverage
 payline/settings.py
+demo/demoshop.db
+demo/.secrets

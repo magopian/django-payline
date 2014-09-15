@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from datetime import datetime, timedelta
-
 from uuid import uuid4
 
 from django.db import models
-try:  # available from Django1.4
-    from django.utils.timezone import now
+try:  # changed in Django 1.7
+    from django.contrib.contenttypes.fields import GenericForeignKey
 except ImportError:
-    now = datetime.now
+    from django.contrib.contenttypes.generic import GenericForeignKey  # noqa
+from django.contrib.contenttypes.models import ContentType
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -91,13 +90,36 @@ class Transaction(models.Model):
         Wallet, null=True, blank=True,
         on_delete=models.SET_NULL,  # do never ever delete
         help_text=_("Wallet holding payment information"))
-    date = models.DateTimeField(
-        default=now, help_text=_("When the account was created"))
+    date = models.DateTimeField(help_text=_("When the transaction was made"),
+                                null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     transaction_id = models.CharField(
-        max_length=36, editable=False, db_index=True, unique=True)
+        _("Unique Payline identifier"),
+        max_length=50, editable=False, blank=True
+    )
+    token = models.CharField(
+        _("Timestamped token used to identify the transaction"),
+        max_length=36, unique=True,
+    )
+    result_code = models.CharField(
+        _("Transaction success code"), max_length=8, blank=True
+    )
+    order_type = models.ForeignKey(ContentType, null=True,
+                                   on_delete=models.SET_NULL)
+    order_id = models.PositiveIntegerField(null=True)
+    order_object = GenericForeignKey('order_type', 'order_id')
+
+    def __unicode__(self):
+        return "Transaction %s for order %s" % (
+            self.transaction_id, self.order_id
+        )
 
     class Meta:
         ordering = ('-date',)
-        verbose_name = _("transaction")
-        verbose_name_plural = _("transactions")
+
+    def validate(self, payment_details):
+        self.result_code = payment_details.result.code
+        self.date = datetime.strptime(payment_details.transaction.date,
+                                      '%d/%m/%Y %H:%M')
+        self.transaction_id = payment_details.transaction.id
+        self.save()

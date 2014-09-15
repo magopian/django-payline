@@ -10,8 +10,13 @@ DATABASES = {
 }
 
 INSTALLED_APPS = [
+    'django.contrib.contenttypes',
+    'south',
     'payline',
 ]
 
-TEST_RUNNER = 'discover_runner.DiscoverRunner'
+PAYLINE_MERCHANT_ID = os.environ.get('PAYLINE_MERCHANT_ID')
+PAYLINE_KEY = os.environ.get('PAYLINE_KEY')
+PAYLINE_VADNBR = os.environ.get('PAYLINE_VADNBR')
+
 SECRET_KEY = 'better make this secret'

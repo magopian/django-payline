@@ -52,8 +52,8 @@ tables:
 Payline API
 -----------
 
-By default, Payline's "homologation" WSDL will be used for all the API calls.
-For those to succeed, make sure you have the necessary settings:
+By default, Payline's "homologation" WSDL for the DirectPayment API will be used.
+For those API calls to succeed, make sure you have the necessary settings:
 
 * PAYLINE_MERCHANT_ID
 * PAYLINE_KEY
@@ -64,25 +64,16 @@ following two are generated from `Payline's web admin interface`_.
 
 .. _Payline's web admin interface: https://homologation-admin.payline.com/userManager.do?reqCode=prepareLogin
 
+To use another Payline API, you can set the PAYLINE_API setting to one of
+these values: DirectPayment, WebPayment or MassPayment (MassPayment isn't
+currently supported by django-payline, patches welcome).
 
-To use Payline in production, you need to provide the production merchant ID,
-API key and VAD contract number (from `Payline's production web admin
-interface`_), but you also need to point the settings at the production WSDL
-file.
+To use Payline in production, you need to provide the production merchant
+ID, API key and VAD contract number (from `Payline's production web admin
+interface`_), you also need to set the PAYLINE_DEBUG setting to ``False``
+to switch the environment from Homologation to Production.
 
 .. _Payline's production web admin interface: https://admin.payline.com/userManager.do?reqCode=prepareLogin
-
-To do so, you may use the following setting to point at the production WSDL
-packaged with the app (which isn't the most up to date, but the one tested):
-
-::
-
-    from os import path
-
-    import payline
-
-    wsdl = path.join(path.dirname(payline.__file__), 'DirectPaymentAPI_prod.wsdl')
-    PAYLINE_WSDL = 'file://%s' % wsdl
 
 Usage
 -----
@@ -203,6 +194,7 @@ foreign key added to the user's profile, pointing to ``payline.models.Wallet``:
 Changes
 -------
 
+* 0.12: add support for WebPayments
 * 0.11: translation
 * 0.10: properly fake/mock payline for non-integration tests
 * 0.9: better validation of the payment card (authorize first)

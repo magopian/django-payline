@@ -7,6 +7,7 @@ from os import path
 from uuid import uuid4
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext as _
 from suds import WebFault
 from suds.client import Client
@@ -18,32 +19,52 @@ logger = getLogger('payline')
 class PaylineProcessor(object):
     """Payline Payment Backend."""
 
+    AUTHORIZE = 100
+    AUTHORIZE_AND_VALIDATE = 101
+
+    PAYMENT_SUCCESS = "00000"
+
     def __init__(self):
         """Instantiate suds client."""
-        here = path.abspath(path.dirname(__file__))
-        self.wsdl = getattr(
-            settings, 'PAYLINE_WSDL',
-            'file://%s' % path.join(here, 'DirectPaymentAPI.wsdl'))
-        self.merchant_id = getattr(settings, 'PAYLINE_MERCHANT_ID', '')
-        self.api_key = getattr(settings, 'PAYLINE_KEY', '')
+        wsdl_dir = path.join(path.abspath(path.dirname(__file__)), 'wsdl/v4_0')
+
+        payline_api = getattr(settings, 'PAYLINE_API', 'DirectPayment')
+        if payline_api not in ('DirectPayment', 'WebPayment', 'MassPayment'):
+            raise ValueError("Unsupported Payline API: %s" % payline_api)
+
+        debug_mode = getattr(settings, 'PAYLINE_DEBUG', True)
+        environment = 'homologation' if debug_mode else 'production'
+        wsdl_path = path.join(wsdl_dir, environment,
+                              "{0}API.wsdl".format(payline_api))
+        wsdl_uri = 'file://%s' % wsdl_path
+
+        merchant_id = getattr(settings, 'PAYLINE_MERCHANT_ID', '')
+        api_key = getattr(settings, 'PAYLINE_KEY', '')
         self.vad_number = getattr(settings, 'PAYLINE_VADNBR', '')
-        self.client = Client(url=self.wsdl,
-                             username=self.merchant_id,
-                             password=self.api_key)
+        if api_key:
+            if not merchant_id:
+                raise ImproperlyConfigured('Missing: PAYLINE_MERCHANT_ID')
+            if not self.vad_number:
+                raise ImproperlyConfigured('Missing: PAYLINE_VADNBR')
+        # Fallback to Euro if no currency code is defined in the settings.
+        self.currency_code = getattr(settings, 'PAYLINE_CURRENCY_CODE', 978)
+        self.client = Client(url=wsdl_uri,
+                             username=merchant_id,
+                             password=api_key)
 
     def validate_card(self, card_number, card_type, card_expiry, card_cvx):
         """Do an Authorization request to make sure the card is valid."""
         minimum_amount = 100  # 1€ is the smallest amount authorized
         payment = self.client.factory.create('ns1:payment')
         payment.amount = minimum_amount
-        payment.currency = 978  # euros
-        payment.action = 100  # authorization only
+        payment.currency = self.currency_code
+        payment.action = self.AUTHORIZE
         payment.mode = 'CPT'  # CPT = comptant
         payment.contractNumber = self.vad_number
         order = self.client.factory.create('ns1:order')
         order.ref = str(uuid4())
         order.amount = minimum_amount
-        order.currency = 978
+        order.currency = self.currency_code
         order.date = datetime.now().strftime("%d/%m/%Y %H:%M")
         card = self.client.factory.create('ns1:card')
         card.number = card_number
@@ -58,7 +79,7 @@ class PaylineProcessor(object):
             logger.error("Payment backend failure", exc_info=True)
             return (False, None,
                     _("Payment backend failure, please try again later."))
-        result = (res.result.code == "00000",  # success ?
+        result = (res.result.code == self.PAYMENT_SUCCESS,
                   res.result.shortMessage + ': ' + res.result.longMessage)
         if result[0]:  # authorization was successful, now cancel it (clean up)
             self.client.service.doReset(transactionID=res.transaction.id,
@@ -113,14 +134,14 @@ class PaylineProcessor(object):
         amount_cents = amount * 100  # use the smallest unit possible (cents)
         payment = self.client.factory.create('ns1:payment')
         payment.amount = amount_cents
-        payment.currency = 978  # euros
-        payment.action = 101  # authorization + validation = payment
+        payment.currency = self.currency_code
+        payment.action = self.AUTHORIZE_AND_VALIDATE
         payment.mode = 'CPT'  # CPT = comptant
         payment.contractNumber = self.vad_number
         order = self.client.factory.create('ns1:order')
         order.ref = str(uuid4())
         order.amount = amount_cents
-        order.currency = 978
+        order.currency = self.currency_code
         order.date = datetime.now().strftime("%d/%m/%Y %H:%M")
         try:
             res = self.client.service.doImmediateWalletPayment(
@@ -131,6 +152,46 @@ class PaylineProcessor(object):
             logger.error("Payment backend failure", exc_info=True)
             return (False, None,
                     _("Payment backend failure, please try again later."))
-        return (res.result.code == "00000",  # success ?
+        return (res.result.code == self.PAYMENT_SUCCESS,
                 res.transaction.id,
                 res.result.shortMessage + ': ' + res.result.longMessage)
+
+    def make_web_payment(self, order_ref, amount):
+        amount_cents = int(float(amount) * 100)
+        payment = self.client.factory.create('ns1:payment')
+        payment.amount = amount_cents
+        payment.currency = self.currency_code
+        payment.action = self.AUTHORIZE_AND_VALIDATE
+        payment.mode = 'CPT'
+        payment.contractNumber = self.vad_number
+
+        order = self.client.factory.create('ns1:order')
+        order.ref = order_ref
+        order.amount = amount_cents
+        order.currency = self.currency_code
+        order.date = datetime.now().strftime("%d/%m/%Y %H:%M")
+
+        return_url = getattr(settings, 'PAYLINE_RETURN_URL', '')
+        cancel_url = getattr(settings, 'PAYLINE_CANCEL_URL', '')
+        notification_url = getattr(settings, 'PAYLINE_NOTIFICATION_URL', '')
+
+        try:
+            result = self.client.service.doWebPayment(
+                payment=payment,
+                returnURL=return_url,
+                cancelURL=cancel_url,
+                order=order,
+                notificationURL=notification_url,
+                selectedContractList=(self.vad_number, )
+            )
+        except WebFault:
+            logger.error("Payment backend failure", exc_info=True)
+            return (False, None)
+        return (result.result.code == self.PAYMENT_SUCCESS, result)
+
+    def get_web_payment_details(self, token):
+        result = self.client.service.getWebPaymentDetails(
+            version=3,
+            token=token,
+        )
+        return (result.result.code == self.PAYMENT_SUCCESS, result)
