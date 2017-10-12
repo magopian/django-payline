@@ -41,6 +41,7 @@ class WalletForm(forms.ModelForm):
 
     class Meta:
         model = Wallet
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(WalletForm, self).__init__(*args, **kwargs)
